@@ -1,0 +1,10 @@
+{
+    "Lua.diagnostics.disable": [
+        "deprecated"
+    ],
+    "Lua.workspace.library": [
+        "API/",
+        "C:\\Users\\Nick\\Documents\\PlancoModdingPC2\\LUALS\\Scripts"
+    ]
+
+}

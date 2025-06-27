@@ -1,0 +1,1385 @@
+<PscollectionRoot count="163" game="Games.PLANET_COASTER_2">
+    <prepared_statements pool_type="4">
+        <preparedstatement>
+            <statement_name pool_type="6">NTLGetAllTrackedRides</statement_name>
+            <sql_query pool_type="6">SELECT Name FROM RideData;</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <statement_name pool_type="6">NTLGetNonTransportRides</statement_name>
+            <sql_query pool_type="6">SELECT Simulation.Name FROM Simulation INNER JOIN RideData ON
+                RideData.Ride = Simulation.Name WHERE Simulation.IsTransport=0 AND
+                (RideData.TrainTypeName="Car" OR RideData.TrainTypeName="Raft");</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <statement_name pool_type="6">NTLGetNonTransportNonFlumeRides</statement_name>
+            <sql_query pool_type="6">SELECT Simulation.Name FROM Simulation INNER JOIN RideData ON
+                RideData.Ride = Simulation.Name WHERE Simulation.IsTransport=0 AND
+                Simulation.IsWaterSlide=0 AND RideData.TrainTypeName="Car";</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <statement_name pool_type="6">NTLGetAllTrains</statement_name>
+            <sql_query pool_type="6">SELECT Trains.Train FROM Trains WHERE IsRacing=0;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLGetAllRideTrains_ExtraOfRide</statement_name>
+            <sql_query pool_type="6">SELECT RideTrains_Extra.Train, RideTrains_Extra.Sort,
+                RideTrains_Extra.SceneryAttachmentGroup FROM RideTrains_Extra WHERE Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="3">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="3" arg_index="2" />
+                <arg arg_type="0" arg_index="3" />
+                </args>
+            <statement_name pool_type="6">NTLUpdateTrainToRideExtra</statement_name>
+            <sql_query pool_type="6">INSERT OR IGNORE INTO RideTrains_Extra(Ride,Train,Sort)
+                VALUES(?1,?2,?3);</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="4">
+            <args>
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+                <arg arg_type="2" arg_index="3" />
+                <arg arg_type="2" arg_index="4" />
+            </args>
+            <statement_name>NTLSetElementsParameterValues</statement_name>
+            <sql_query>UPDATE ElementParams SET
+                Min=COALESCE(?2,Min),Max=COALESCE(?3,Max),Step=COALESCE(?4,Step) WHERE Param=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <args>
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="3" arg_index="2" />
+                <arg arg_type="2" arg_index="3" />
+                <arg arg_type="2" arg_index="4" />
+                <arg arg_type="2" arg_index="5" />
+            </args>
+            <statement_name>NTLSetElementParamaterValues</statement_name>
+            <sql_query>UPDATE ElementParams SET
+                Min=COALESCE(?3,Min),Max=COALESCE(?4,Max),Step=COALESCE(?5,Step) WHERE Param=?1 AND
+                Element=?2</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="3">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+                <arg arg_type="2" arg_index="3" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideTrackLength</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2,Step=?3 WHERE
+                Param="LengthRangeMetres";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinTrackLength</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE Param="LengthRangeMetres"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxTrackLength</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="LengthRangeMetres"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideStepTrackLength</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Step=?2 WHERE Param="LengthRangeMetres"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesStepTrackLength</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Step=?1 WHERE Param="LengthRangeMetres";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="SlopeRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="SlopeRangeDegrees"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="SlopeRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="SlopeRangeDegrees"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="SlopeRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE Param="SlopeRangeDegrees"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1 WHERE Param="SlopeRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="SlopeRangeDegrees"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxSlopeRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?1 WHERE Param="SlopeRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <args>
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name>NTLUpdateRidesMaxSlopeDeltaDegrees</statement_name>
+            <sql_query>UPDATE RideData SET MaxSlopeDeltaDegrees=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <args>
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name>NTLUpdateRideMaxSlopeDeltaDegrees</statement_name>
+            <sql_query>UPDATE RideData SET MaxSlopeDeltaDegrees=?2 WHERE Ride=?1;</sql_query>
+        </preparedstatement>
+        
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="BankingRangeDegrees";</sql_query>
+        </preparedstatement>
+      
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1 WHERE Param="BankingRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE Param="BankingRangeDegrees"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="BankingRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="BankingRangeDegrees" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="BankingRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxBankingRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="BankingRangeDegrees"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <args>
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name>NTLUpdateRidesMaxSlopeDeltaDegrees</statement_name>
+            <sql_query>UPDATE RideData SET MaxSlopeDeltaDegrees=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement>
+            <args>
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name>NTLUpdateRideMaxBankDeltaDegrees</statement_name>
+            <sql_query>UPDATE RideData SET MaxBankDeltaDegrees=?2 WHERE Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="BankPivotRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="BankPivotRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE Param="BankPivotRange" AND
+                Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1 WHERE Param="BankPivotRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="BankPivotRange"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BankPivotRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="BankPivotRange" AND
+                Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?1 WHERE Param="BankPivotRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="BankPivotRange"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxBankPivotRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="BankPivotRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="CurveRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="CurveRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="CurveRangeDegrees"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="CurveRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE Param="CurveRangeDegrees"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="0" arg_index="0" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE Param="CurveRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="CurveRangeDegrees"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="0" arg_index="0" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="CurveRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="CurveRangeDegrees"
+                AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxCurveRangeDegrees</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="CurveRangeDegrees";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsScaleRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="ScaleRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinScaleRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="ScaleRange" AND
+                Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinScaleRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="ScaleRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxScaleRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="ScaleRange" AND
+                Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxScaleRange</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="ScaleRange";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="BoosterAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMinBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="BoosterAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMinBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="BoosterAcceleration" WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMaxBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="BoosterAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMaxBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="BoosterAcceleration" WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetAltBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="AltBoosterAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMinAltBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="AltBoosterAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMinAltBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="AltBoosterAcceleration" WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMaxAltBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="AltBoosterAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMaxAltBoosterAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="AltBoosterAcceleration" WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="BoosterMaxSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMinBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BoosterMaxSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMinBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BoosterMaxSpeed"
+                WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMaxBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BoosterMaxSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMaxBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BoosterMaxSpeed"
+                WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetAltBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="AltBoosterMaxSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMinAltBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="AltBoosterMaxSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMinAltBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="AltBoosterMaxSpeed" WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsMaxAltBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="AltBoosterMaxSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementMaxAltBoosterMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="AltBoosterMaxSpeed" WHERE Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="HydraulicLaunchAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetRidesHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="HydraulicLaunchAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HydraulicLaunchAcceleration" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="HydraulicLaunchAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="HydraulicLaunchAcceleration" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="HydraulicLaunchAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE
+                Param="HydraulicLaunchAcceleration" AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1 WHERE
+                Param="HydraulicLaunchAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE
+                Param="HydraulicLaunchAcceleration" AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxHydraulicAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?1 WHERE
+                Param="HydraulicLaunchAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="HydraulicLaunchLauchSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetRidesHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="HydraulicLaunchLauchSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HydraulicLaunchLauchSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="HydraulicLaunchLauchSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE
+                Param="HydraulicLaunchLauchSpeed" AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1 WHERE
+                Param="HydraulicLaunchLauchSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="HydraulicLaunchLauchSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="HydraulicLaunchLauchSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE
+                Param="HydraulicLaunchLauchSpeed" AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxHydraulicSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?1 WHERE
+                Param="HydraulicLaunchLauchSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="HydraulicLaunchReturnSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetRidesHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
+                Param="HydraulicLaunchReturnSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HydraulicLaunchReturnSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="HydraulicLaunchReturnSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMinHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?1 WHERE
+                Param="HydraulicLaunchReturnSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMinHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Min=?2 WHERE
+                Param="HydraulicLaunchReturnSpeed" AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="HydraulicLaunchReturnSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="HydraulicLaunchReturnSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRideMaxHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE
+                Param="HydraulicLaunchReturnSpeed" AND Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateRidesMaxHydraulicReturnSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE RideParams SET Max=?1 WHERE
+                Param="HydraulicLaunchReturnSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsHoldingStopLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="HoldingSectionStopLocation";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+                <arg arg_type="2" arg_index="3" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementHoldingStopLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2,Max=?3 WHERE
+                Param="HoldingSectionStopLocation" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinHoldingStopLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HoldingSectionStopLocation" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinHoldingStopLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="HoldingSectionStopLocation";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxHoldingStopLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="HoldingSectionStopLocation";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxHoldingStopLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="HoldingSectionStopLocation" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetHoldingReleaseSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="HoldingSectionReleaseSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinHoldingReleaseSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HoldingSectionReleaseSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinHoldingReleaseSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HoldingSectionReleaseSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxHoldingReleaseSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="HoldingSectionReleaseSpeed" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxHoldingReleaseSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="HoldingSectionReleaseSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetHoldingReleaseAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="HoldingSectionReleaseAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinHoldingReleaseAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HoldingSectionReleaseAcceleration" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinHoldingReleaseAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="HoldingSectionReleaseAcceleration" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxHoldingReleaseAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="HoldingSectionReleaseAcceleration" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxHoldingReleaseAcceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="HoldingSectionReleaseAcceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args>
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name>NTLSetAnimatedTrackPostDepartureDelay</statement_name>
+            <sql_query>UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="AnimatedTrackPostDepartureDelay";</sql_query>
+        </preparedstatement>
+
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="BrakeMinSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="BrakeMinSpeed" AND
+                Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="BrakeMinSpeed" AND
+                Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxBrakeMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetBrakeDeceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="BrakeDeceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinBrakeDeceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="BrakeDeceleration"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinBrakeDeceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="BrakeDeceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxBrakeDeceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="BrakeDeceleration"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxBrakeDeceleration</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="BrakeDeceleration";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetChainLiftSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="ChainLiftSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinChainLiftSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE Param="ChainLiftSpeed"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinChainLiftSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="ChainLiftSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxChainLiftSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE Param="ChainLiftSpeed"
+                AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxChainLiftSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="ChainLiftSpeed";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+                <arg arg_type="0" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetChainLiftDropLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
+                Param="ChainLiftDropLocation";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMinChainLiftDropLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2 WHERE
+                Param="ChainLiftDropLocation" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMinChainLiftDropLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
+                Param="ChainLiftDropLocation";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementMaxChainLiftDropLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?2 WHERE
+                Param="ChainLiftDropLocation" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementsMaxChainLiftDropLocation</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
+                Param="ChainLiftDropLocation";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="0" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementAllowedOnWater</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2,Max=?2,Initial=?2,Step=?2 WHERE
+                Param="AllowedOnWater" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetElementsAllowedOnWater</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2,Max=?2,Initial=?2,Step=?2 WHERE
+                Param="AllowedOnWater";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="0" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetChainLiftSwapOnSlopeDown</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2,Max=?2,Initial=?2,Step=?2 WHERE
+                Param="SwapToDefaultWhenSlopedDown" AND Element=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetChainLiftsSwapOnSlopeDown</statement_name>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?2,Max=?2,Initial=?2,Step=?2 WHERE
+                Param="SwapToDefaultWhenSlopedDown";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+                <arg arg_type="0" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetNumCars</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET MinCars=?1,MaxCars=?2 WHERE NOT
+                Train="PTR_FDVision";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateMinNumCars</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET MinCars=?2 WHERE NOT Train="PTR_FDVision";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateMaxNumCars</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET MaxCars=?2 WHERE NOT Train="PTR_FDVision";</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetPoweredCarMaxSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET Powered_MaxSpeed=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetPoweredCarMinSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET Powered_MinSpeed=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetPoweredCarSpeed</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET Powered_MinSpeed=?1,Powered_MaxSpeed=?2 WHERE
+                NOT Powered_MinSpeed=0 AND NOT Powered_MaxSpeed=0;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="2" arg_index="1" />
+                <arg arg_type="2" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLSetPassesThroughStation</statement_name>
+            <sql_query pool_type="6">UPDATE Trains SET
+                MinNumPassesThroughStation=?1,MaxNumPassesThroughStation=?2;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args>
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name>NTLSetMinPassesThroughStation</statement_name>
+            <sql_query>UPDATE Trains SET MinPassesThroughStation=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args>
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name>NTLSetMaxPassesThroughStation</statement_name>
+            <sql_query>UPDATE Trains SET MaxPassesThroughStation=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args>
+                <arg arg_type="2" arg_index="1" />
+            </args>
+            <statement_name>NTLUpdateMaxNumTrain</statement_name>
+            <sql_query>UPDATE Trains SET HardMaxTrains=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args pool_type="4">
+                <arg arg_type="0" arg_index="1" />
+            </args>
+            <statement_name pool_type="6">NTLSetMaxTrackHeight</statement_name>
+            <sql_query pool_type="6">UPDATE RideData SET MaxTrackHeightFeet=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="3" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementToElementLists</statement_name>
+            <sql_query pool_type="6">INSERT OR IGNORE INTO ElementLists(Ride,Element) VALUES(?1,?2);</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="8">
+            <args>
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="3" arg_index="2" />
+                <arg arg_type="2" arg_index="3" />
+                <arg arg_type="2" arg_index="4" />
+                <arg arg_type="2" arg_index="5" />
+                <arg arg_type="2" arg_index="6" />
+                <arg arg_type="3" arg_index="7" />
+                <arg arg_type="3" arg_index="8" />
+            </args>
+            <statement_name>NTLAppendElementParamaterToElement</statement_name>
+            <sql_query>INSERT OR IGNORE INTO
+                ElementParams(Element,Param,Min,Max,Initial,Step,LabelOverride,ValueLabelSetName)
+                VALUES(?1,?2,?3,?4,?5,?6,?7,?8);</sql_query>
+        </preparedstatement>
+    </prepared_statements>
+</PscollectionRoot>
