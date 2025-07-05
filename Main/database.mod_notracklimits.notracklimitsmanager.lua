@@ -6,7 +6,7 @@ local loadfile = global.loadfile
 local pairs = global.pairs
 local ipairs = global.ipairs
 local math = global.math
-
+local tryrequire = global.tryrequire
 local Vector3 = require("Vector3")
 ---@class (partial) GameDatabase
 local GameDatabase = require("Database.GameDatabase")
@@ -15,13 +15,34 @@ local database = api.database
 ---@class NoTrackLimitsManager
 ---@field Global table Currently stored config of NoTrackLimits
 local NoTrackLimitsManager = module(...)
+local forgeUtilsLogger = nil
 
-local _tTrace = api.debug.TraceNoFlush or api.debug.Trace
+local _tTrace = function(_line)
+    --if forgeUtilsLogger ~= nil then
+    --    forgeUtilsLogger.Info(_line)
+    --    return
+    --end
+    local _trace = api.debug.TraceNoFlush or api.debug.Trace
+    return _trace("[NoTrackLimits]: " .. _line)
+end
+
 local dbgTrace = function(_line)
-    -- Should print when grabbing the
     if NoTrackLimitsManager.Global.bPrintDebugLog then
-        _tTrace("[NoTrackLimits]: " .. _line)
+        _tTrace(_line)
     end
+end
+
+local dbgTraceErr = function(_line)
+    --if NoTrackLimitsManager.Global.bPrintDebugLog ~= true then
+    --    return
+    --end
+    --if forgeUtilsLogger ~= nil then
+    --    forgeUtilsLogger.Error(_line)
+    --    return
+    --end
+
+    local _trace = api.debug.TraceNoFlush or api.debug.Trace
+    return _trace("[NoTrackLimits]: " .. _line)
 end
 
 --- Default Config values.
@@ -184,6 +205,12 @@ local invertedCameraTrainPrefabs = {
 }
 
 NoTrackLimitsManager.Init = function()
+    local forgeUtils = tryrequire("forgeutils.Logger")
+
+    if forgeUtils ~= nil then
+        forgeUtilsLogger = forgeUtils:Get("NoTrackLimits")
+    end
+
     NoTrackLimitsManager.Global = {}
     NoTrackLimitsManager.tRides = {}
     NoTrackLimitsManager.tNonSlideRides = {}
@@ -204,11 +231,11 @@ local LoadConfig = function()
         dbgTrace(tostring(chunk))
         bOK, sMsg = global.pcall(chunk, nil)
         if bOK == false then
-            dbgTrace("Config.NoTrackLimits - error")
-            dbgTrace(sMsg)
+            dbgTraceErr("Config.NoTrackLimits - error")
+            dbgTraceErr(sMsg)
         end
     else
-        dbgTrace(tostring(err))
+        dbgTraceErr(tostring(err))
     end
     return bOK, env, { err, sMsg }
 end
@@ -237,6 +264,23 @@ end
 
 NoTrackLimitsManager.Setup = function()
     api.debug.Trace("Mod_NoTrackLimits.NoTrackLimitsManager:Setup()")
+    NoTrackLimitsManager.Global = NoTrackLimitsManager._tConfigDefaults
+
+    -- Config read here
+    local bOK_Main, tNTL, tErrorMain = LoadConfig()
+    dbgTrace("config grabbed")
+    -- Now, PZPlus basically "merges" the tables together.. ok
+    dbgTrace(tostring(bOK_Main))
+    MergeConfig(tNTL)
+    dbgTrace(tostring(NoTrackLimitsManager.Global.eConfigMode))
+    if NoTrackLimitsManager.Global.eConfigMode == "custom" then
+        dbgTrace("Loading 'custom' config")
+    else
+        dbgTrace("Loading 'realistic config")
+        NoTrackLimitsManager.Global.tConfig = NoTrackLimitsManager._tRealisticDefaults
+    end
+
+    NoTrackLimitsManager._BindPreparedStatements()
 end
 
 ---Executes a Prepared Statement to a selected database with provided arguments.
@@ -1241,10 +1285,9 @@ end
 -- PreBuildPrefabs is used here as a way to ensure the database functions are called before prefabs are actually built
 -- Therefore, _fnAdd is never needed
 NoTrackLimitsManager.PreBuildPrefabs = function(_fnAdd, _tLuaPrefabNames, _tLuaPrefabs)
-    dbgTrace("NoTrackLimitsManager.PreBuildPrefabs()")
-
     NoTrackLimitsManager.Global = NoTrackLimitsManager._tConfigDefaults
 
+    dbgTrace("NoTrackLimitsManager.PreBuildPrefabs()")
     -- Config read here
     local bOK_Main, tNTL, tErrorMain = LoadConfig()
     dbgTrace("config grabbed")
