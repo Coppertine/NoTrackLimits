@@ -6,7 +6,6 @@ local loadfile = global.loadfile
 local pairs = global.pairs
 local ipairs = global.ipairs
 local math = global.math
-local DatabaseUtils = require("ForgeUtils.Internal.Database.DatabaseUtils")
 
 local Vector3 = require("Vector3")
 ---@class (partial) GameDatabase
@@ -30,6 +29,7 @@ NoTrackLimitsManager._tConfigDefaults = {
     eConfigMode = "realistic",
     bEnableCameraEffects = false,
     bAllowAllInterchangableCoasterTrains = true,
+    bPatchTrainCameras = true,
     bPrintDebugLog = true,
     tConfig = {}
 }
@@ -38,13 +38,13 @@ NoTrackLimitsManager._tConfigDefaults = {
 --- Used as fallback or when `eConfigMode` is set as `"realistic"`
 NoTrackLimitsManager._tRealisticDefaults = {
     tAppendedElements = { "default_LSM", "default_LSM_HoldingSection", "default_chainlift" },
-    -- tAppendedElementsToRide = {
-    --     CC_Vector = {'TK_040_ShuttleLaunch_station_leftleft', 'TK_040_ShuttleLaunch_station_leftright',
-    --                       'TK_040_ShuttleLaunch_station_rightleft', 'TK_040_ShuttleLaunch_station_rightright',
-    --                       'TK_040_Shuttle_booster'}
-    -- },
+    tAppendedElementsToRide = {
+        CC_Vector = { 'TK_040_ShuttleLaunch_station_leftleft', 'TK_040_ShuttleLaunch_station_leftright',
+            'TK_040_ShuttleLaunch_station_rightleft', 'TK_040_ShuttleLaunch_station_rightright',
+            'TK_040_Shuttle_booster' }
+    },
     tTrackLength = {
-        min = 2,
+        min = 1,
         max = 50,
         step = 1
     },
@@ -122,15 +122,12 @@ NoTrackLimitsManager._tRealisticDefaults = {
             min = 0.27777777,
             max = nil -- default value
         },
-        -- NTLSetBrakeDeceleration (min-float max-float)
         tDeceleration = {
             min = nil,
             max = 20.0
         }
     },
     tChainLift = {
-        -- Meters per second
-        -- NTLSetChainLiftSpeed (min - max)
         tSpeed = {
             min = 0.0,
             max = 10.0
@@ -165,7 +162,7 @@ NoTrackLimitsManager._tRealisticDefaults = {
     }
 }
 
--- List of all the trains that decided that cameras are a crazy fad
+-- List of all the trains that decided that cameras are a crazy fad and should be wonky in the process.
 -- Edit: On further inspection, these seem to be PC1 trains that weren't properly translated over..
 -- Thx Hiyshhiysh for finding all these and Distantz for finding the problem with these trains.
 local invertedCameraTrainPrefabs = {
@@ -193,7 +190,7 @@ NoTrackLimitsManager.Init = function()
     NoTrackLimitsManager.tNonKartTrains = {}
 end
 
--- Shamelessly taken partly from FreeBuild
+-- Shamelessly taken partly from Kai's FreeBuild
 ---Loads a lua file (disguised as a .ini file) with no environment attached and is parsed to a table as output.
 ---@return boolean bOK Success of config loading.
 ---@return table env Config output from file.
@@ -215,6 +212,7 @@ local LoadConfig = function()
     end
     return bOK, env, { err, sMsg }
 end
+
 ---Merges each value from both _input and the global table together. <br/>
 ---This is intended as a workaround to tables from a loadfile not behaving the same as regular tables.
 ---<br/> Original from FreeBuild
@@ -239,22 +237,6 @@ end
 
 NoTrackLimitsManager.Setup = function()
     api.debug.Trace("Mod_NoTrackLimits.NoTrackLimitsManager:Setup()")
-
-    NoTrackLimitsManager.Global = NoTrackLimitsManager._tConfigDefaults
-
-    -- Config read here
-    local bOK_Main, tNTL, tErrorMain = LoadConfig()
-    dbgTrace("config grabbed")
-    -- Now, PZPlus basically "merges" the tables together.. ok
-    dbgTrace(tostring(bOK_Main))
-    MergeConfig(tNTL)
-    dbgTrace(tostring(NoTrackLimitsManager.Global.eConfigMode))
-    if NoTrackLimitsManager.Global.eConfigMode == "custom" then
-        dbgTrace("Loading 'custom' config")
-    else
-        dbgTrace("Loading 'realistic config")
-        NoTrackLimitsManager.Global.tConfig = NoTrackLimitsManager._tRealisticDefaults
-    end
 end
 
 ---Executes a Prepared Statement to a selected database with provided arguments.
@@ -318,9 +300,6 @@ NoTrackLimitsManager.tDatabaseFunctions = {
     -- All Rides (Non-Transport)
     NTLGetAllTrackedRides = function()
         dbgTrace("NoTrackLimitsManager.GetAllRides()")
-        -- TODO: Revert Me once done.
-        --return DatabaseUtils.ExecuteQuery("TrackedRides", "NTLGetAllTrackedRides")
-
         return NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
             "NTLGetAllTrackedRides")
     end,
@@ -350,9 +329,6 @@ NoTrackLimitsManager.tDatabaseFunctions = {
 
         for _, _sRide in ipairs(NoTrackLimitsManager.tRides) do
             dbgTrace(_sRide)
-            ----- TODO: Also remove me
-            --DatabaseUtils.ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides", "NTLUpdateElementToElementLists",
-            --    _sRide, _sElementName)
             NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
                 "NTLUpdateElementToElementLists", _sRide, _sElementName)
         end
@@ -1150,7 +1126,7 @@ NoTrackLimitsManager.tDatabaseFunctions = {
         -- Some coasters / flat rides don't even have their own trains
         -- So we need to account for that
         if _trainDBList == nil or #_trainDBList == 0 then
-            dbgTrace("This is a weird one")
+            dbgTrace("Found empty list, adding in all trains.")
             _iSort = 10
             for _, _train in pairs(NoTrackLimitsManager.tNonKartTrains) do
                 NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
@@ -1266,6 +1242,23 @@ end
 -- Therefore, _fnAdd is never needed
 NoTrackLimitsManager.PreBuildPrefabs = function(_fnAdd, _tLuaPrefabNames, _tLuaPrefabs)
     dbgTrace("NoTrackLimitsManager.PreBuildPrefabs()")
+
+    NoTrackLimitsManager.Global = NoTrackLimitsManager._tConfigDefaults
+
+    -- Config read here
+    local bOK_Main, tNTL, tErrorMain = LoadConfig()
+    dbgTrace("config grabbed")
+    -- Now, PZPlus basically "merges" the tables together.. ok
+    dbgTrace(tostring(bOK_Main))
+    MergeConfig(tNTL)
+    dbgTrace(tostring(NoTrackLimitsManager.Global.eConfigMode))
+    if NoTrackLimitsManager.Global.eConfigMode == "custom" then
+        dbgTrace("Loading 'custom' config")
+    else
+        dbgTrace("Loading 'realistic config")
+        NoTrackLimitsManager.Global.tConfig = NoTrackLimitsManager._tRealisticDefaults
+    end
+
     NoTrackLimitsManager._BindPreparedStatements()
 
     local _tRides = GameDatabase.NTLGetAllTrackedRides()
@@ -1294,7 +1287,7 @@ NoTrackLimitsManager.PreBuildPrefabs = function(_fnAdd, _tLuaPrefabNames, _tLuaP
 
     -- remember how i said that _fnAdd is never needed? i lied
     -- this is for the strange case of Frontier accidentally doing -pi to some train cameras. need to iterate through all train prefabs tho.
-    if NoTrackLimitsManager.Global.bEnableCameraEffects ~= true then
+    if NoTrackLimitsManager.Global.bEnableCameraEffects ~= true and NoTrackLimitsManager.Global.bPatchTrainCameras == true then
         dbgTrace("Patching all cameras on trains")
         for _, sPrefabName in ipairs(invertedCameraTrainPrefabs) do
             local tVisualsPrefab = NoTrackLimitsManager.EditBumperCameraPrefab(sPrefabName);
@@ -1309,7 +1302,6 @@ end
 NoTrackLimitsManager.EditBumperCameraPrefab = function(sPrefabName)
     dbgTrace("Editing visuals prefab of " .. sPrefabName)
     local tVisualsPrefab = api.entity.FindPrefab(sPrefabName)
-
     if tVisualsPrefab == nil then
         dbgTrace("Prefab not found, are you sure you got the right capitalisation?");
         return nil
