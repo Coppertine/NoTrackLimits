@@ -3,10 +3,15 @@ local api = global.api
 local pairs = global.pairs
 local require = global.require
 local table = require("Common.tableplus")
+local tryrequire = global.tryrequire
 --local export = require("Export")
 local GameDatabase = require("Database.GameDatabase")
 
 local Mod_NoTrackLimitsLuaDatabase = module(...)
+
+local FORGE_UTILS_VERSION = 1.0
+local MOD_NAME = "NoTrackLimits"
+
 Mod_NoTrackLimitsLuaDatabase.AddContentToCall = function(_tContentToCall)
     if not global.api.acse or global.api.acse.versionNumber < 0.7 then
         return
@@ -19,6 +24,11 @@ end
 
 Mod_NoTrackLimitsLuaDatabase.Init = function()
     api.debug.Trace("Mod_NoTrackLimitsLuaDatabase.Init()")
+
+    local forgeutils_module = tryrequire("forgeutils.ModDB")
+    if forgeutils_module ~= nil then
+        forgeutils_module.RegisterMod(MOD_NAME, FORGE_UTILS_VERSION)
+    end
 end
 
 Mod_NoTrackLimitsLuaDatabase.Setup = function()
