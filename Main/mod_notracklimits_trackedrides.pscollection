@@ -2,7 +2,7 @@
     <prepared_statements pool_type="4">
         <preparedstatement>
             <statement_name pool_type="6">NTLGetAllTrackedRides</statement_name>
-            <sql_query pool_type="6">SELECT Name FROM RideData;</sql_query>
+            <sql_query pool_type="6">SELECT Ride FROM RideData;</sql_query>
         </preparedstatement>
         <preparedstatement>
             <statement_name pool_type="6">NTLGetNonTransportRides</statement_name>
@@ -61,6 +61,14 @@
             <sql_query>UPDATE ElementParams SET
                 Min=COALESCE(?3,Min),Max=COALESCE(?4,Max),Step=COALESCE(?5,Step) WHERE Param=?1 AND
                 Element=?2</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="2">
+            <args pool_type="4">
+                <arg arg_type="3" arg_index="1" />
+                <arg arg_type="3" arg_index="2" />
+            </args>
+            <statement_name pool_type="6">NTLUpdateElementToElementLists</statement_name>
+            <sql_query pool_type="6">INSERT OR IGNORE INTO ElementLists(Ride,Element) VALUES(?1,?2);</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="3">
             <args pool_type="4">
@@ -1356,14 +1364,6 @@
             </args>
             <statement_name pool_type="6">NTLSetMaxTrackHeight</statement_name>
             <sql_query pool_type="6">UPDATE RideData SET MaxTrackHeightFeet=?1;</sql_query>
-        </preparedstatement>
-        <preparedstatement arg_count="2">
-            <args pool_type="4">
-                <arg arg_type="3" arg_index="1" />
-                <arg arg_type="3" arg_index="2" />
-            </args>
-            <statement_name pool_type="6">NTLUpdateElementToElementLists</statement_name>
-            <sql_query pool_type="6">INSERT OR IGNORE INTO ElementLists(Ride,Element) VALUES(?1,?2);</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="8">
             <args>
