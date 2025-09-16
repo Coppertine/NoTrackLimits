@@ -15,13 +15,8 @@ local database = api.database
 ---@class NoTrackLimitsManager
 ---@field Global table Currently stored config of NoTrackLimits
 local NoTrackLimitsManager = module(...)
-local forgeUtilsLogger = nil
 
 local _tTrace = function(_line)
-    --if forgeUtilsLogger ~= nil then
-    --    forgeUtilsLogger.Info(_line)
-    --    return
-    --end
     local _trace = api.debug.TraceNoFlush or api.debug.Trace
     return _trace("[NoTrackLimits]: " .. _line)
 end
@@ -33,16 +28,8 @@ local dbgTrace = function(_line)
 end
 
 local dbgTraceErr = function(_line)
-    --if NoTrackLimitsManager.Global.bPrintDebugLog ~= true then
-    --    return
-    --end
-    --if forgeUtilsLogger ~= nil then
-    --    forgeUtilsLogger.Error(_line)
-    --    return
-    --end
-
     local _trace = api.debug.TraceNoFlush or api.debug.Trace
-    return _trace("[NoTrackLimits]: " .. _line)
+    return _trace("[NoTrackLimits ERROR]: " .. _line)
 end
 
 --- Default Config values.
@@ -83,7 +70,8 @@ NoTrackLimitsManager._tRealisticDefaults = {
     },
     tBankPivotRange = {
         min = -2.0,
-        max = 2.0
+        max = 2.0,
+        step = 0.1
     },
     tCurveRange = {
         min = -360.0,
@@ -190,10 +178,11 @@ local invertedCameraTrainPrefabs = {
     "CC_ZenithBogC_Art",         -- Outermax Hydraulic Launch
     "CC_RivalCarF_Art",          -- V&N Invert 4 seater
     "CC_Sprint500CarF_Art",      -- Outermax Hydraulic Launch (Formula Rossa)
-    "CC_Sprint500StockCarF_Art", -- Outermax Hydraulic Launch (Formula Rossa)
+    "CC_Sprint500StockCarF_Art", -- Outermax Hydraulic Launch (Formula Rossa, Standard)
     "CC_TorqueCarF_Art",         -- Murphy & Son Star Loop
     "CC_AethonCarF_Art",         -- V&N Drop
     "CC_DragonCarF_Art",         -- Zephyr Junior Coaster
+    "CC_DragonStockCarF_Art",    -- Zephyr Junior Coaster (Standard)
     "CC_BakasuraCarF_Art",       -- Vector Giant Inverted Return
     "CC_BoaCarF_Art",            -- Giovanni Inverted 2 seater
     "CC_LoonyTurnsCarF_Art",     -- F&F International Crazy Mouse
@@ -555,18 +544,18 @@ NoTrackLimitsManager.tDatabaseFunctions = {
             "NTLUpdateRidesMaxBankingRangeDegrees", _fMax)
     end,
     -- Bank Pivot Range
-    NTLUpdateBankPivotRange = function(_fMin, _fMax)
+    NTLUpdateBankPivotRange = function(_fMin, _fMax, _fStep)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementsBankPivotRange")
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
-            "NTLUpdateElementsBankPivotRange", _fMin, _fMax)
+            "NTLSetElementsParameterValues", "BankPivotRange", _fMin, _fMax, _fStep)
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
-            "NTLUpdateRidesBankPivotRange", _fMin, _fMax)
+            "NTLUpdateRidesBankPivotRange", _fMin, _fMax, _fStep)
     end,
     -- -- Elements
     NTLUpdateElementsMinBankPivotRange = function(_fMin)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementsMinBankPivotRange")
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
-            "NTLUpdateElementsMinBankPivotRange", _fMin)
+            "NTLSetElementsParameterValues", "BankPivotRange", _fMin, nil, nil)
     end,
     NTLUpdateElementMinBankPivotRange = function(_sElement, _fMin)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementMinBankPivotRange")
@@ -583,6 +572,8 @@ NoTrackLimitsManager.tDatabaseFunctions = {
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
             "NTLUpdateElementMaxBankPivotRange", _sElement, _fMax)
     end,
+
+
     -- -- Rides
     NTLUpdateRideMinBankPivotRange = function(_sRide, _fMin)
         dbgTrace("NoTrackLimitsManager.NTLUpdateRideMinBankPivotRange")
@@ -604,6 +595,8 @@ NoTrackLimitsManager.tDatabaseFunctions = {
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
             "NTLUpdateRidesMaxBankPivotRange", _fMax)
     end,
+
+
     -- Curve Range
     NTLUpdateCurveRangeDegrees = function(_fMin, _fMax)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementsCurveRangeDegrees")
@@ -1377,6 +1370,13 @@ end
 
 
 NoTrackLimitsManager._ProcessConfig = function()
+    --- Mostly for those who JUST want more trains or change the camera effects.
+    if NoTrackLimitsManager.Global.tConfig == {} or NoTrackLimitsManager.Global.tConfig == nil then
+        dbgTrace(
+            "tConfig is empty, no changes are made to tracked rides or their elements excluding new trains or prefab edits to cameras")
+        return
+    end
+
     -- Elements to other rides
     if NoTrackLimitsManager.Global.tConfig.tAppendedElements then
         for _, element in ipairs(NoTrackLimitsManager.Global.tConfig.tAppendedElements) do
@@ -1586,6 +1586,10 @@ NoTrackLimitsManager._ProcessConfig = function()
             if NoTrackLimitsManager.Global.tConfig.tBankPivotRange.max ~= nil then
                 _nRangeMax = NoTrackLimitsManager.Global.tConfig.tBankPivotRange.max
             end
+
+            if NoTrackLimitsManager.Global.tConfig.tBankPivotRange.step ~= nil then
+                _nStep = NoTrackLimitsManager.Global.tConfig.tBankPivotRange.step
+            end
             -- dbgTrace("Check 3")
 
             for _, value in pairs(NoTrackLimitsManager.Global.tConfig.tBankPivotRange.tAppendToElements) do
@@ -1598,10 +1602,12 @@ NoTrackLimitsManager._ProcessConfig = function()
         end
 
         if NoTrackLimitsManager.Global.tConfig.tBankPivotRange.min ~= nil and
-            NoTrackLimitsManager.Global.tConfig.tBankPivotRange.max ~= nil then
+            NoTrackLimitsManager.Global.tConfig.tBankPivotRange.max ~= nil and
+            NoTrackLimitsManager.Global.tConfig.tBankPivotRange.step ~= nil then
             dbgTrace("Using min, max")
             GameDatabase.NTLUpdateBankPivotRange(NoTrackLimitsManager.Global.tConfig.tBankPivotRange.min,
-                NoTrackLimitsManager.Global.tConfig.tBankPivotRange.max)
+                NoTrackLimitsManager.Global.tConfig.tBankPivotRange.max,
+                NoTrackLimitsManager.Global.tConfig.tBankPivotRange.step)
         else
             if NoTrackLimitsManager.Global.tConfig.tBankPivotRange.min ~= nil then
                 GameDatabase.NTLUpdateRidesMinBankPivotRange(NoTrackLimitsManager.Global.tConfig.tBankPivotRange.min)
@@ -1736,6 +1742,7 @@ NoTrackLimitsManager._ProcessConfig = function()
             end
         end
     end
+
     -- Alt Booster MaxSpeed (F25)
     if NoTrackLimitsManager.Global.tConfig.tBooster.tSpeed then
         dbgTrace("Setting F25 Booster Speed")
