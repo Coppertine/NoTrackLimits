@@ -1,4 +1,4 @@
-<PscollectionRoot count="163" game="Games.PLANET_COASTER_2">
+<PscollectionRoot count="164" game="Planet Coaster 2">
     <prepared_statements pool_type="4">
         <preparedstatement>
             <statement_name pool_type="6">NTLGetAllTrackedRides</statement_name>
@@ -8,7 +8,7 @@
             <statement_name pool_type="6">NTLGetNonTransportRides</statement_name>
             <sql_query pool_type="6">SELECT Simulation.Name FROM Simulation INNER JOIN RideData ON
                 RideData.Ride = Simulation.Name WHERE Simulation.IsTransport=0 AND
-                (RideData.TrainTypeName="Car" OR RideData.TrainTypeName="Raft");</sql_query>
+                (RideData.TrainTypeName="Car" OR RideData.TrainTypeName="Raft") AND RideData.Ride != "TR_Gondola";</sql_query>
         </preparedstatement>
         <preparedstatement>
             <statement_name pool_type="6">NTLGetNonTransportNonFlumeRides</statement_name>
@@ -284,6 +284,7 @@
             <args pool_type="4">
                 <arg arg_type="2" arg_index="1" />
                 <arg arg_type="2" arg_index="2" />
+                <arg arg_type="2" arg_index="3" />
             </args>
             <statement_name pool_type="6">NTLUpdateRidesBankPivotRange</statement_name>
             <sql_query pool_type="6">UPDATE RideParams SET Min=?1,Max=?2 WHERE
@@ -1073,7 +1074,7 @@
             </args>
             <statement_name pool_type="6">NTLSetBrakeMinSpeed</statement_name>
             <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
-                Param="BrakeMinSpeed";</sql_query>
+                Param="BrakeMinSpeed" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">
@@ -1089,14 +1090,14 @@
                 <arg arg_type="2" arg_index="1" />
             </args>
             <statement_name pool_type="6">NTLUpdateElementsMinBrakeMinSpeed</statement_name>
-            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BrakeMinSpeed" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="1">
             <args pool_type="4">
                 <arg arg_type="2" arg_index="1" />
             </args>
             <statement_name pool_type="6">NTLUpdateElementMinBrakeMinSpeed</statement_name>
-            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+            <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE Param="BrakeMinSpeed" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">
@@ -1112,14 +1113,14 @@
                 <arg arg_type="2" arg_index="1" />
             </args>
             <statement_name pool_type="6">NTLUpdateElementMaxBrakeMinSpeed</statement_name>
-            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BrakeMinSpeed" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="1">
             <args pool_type="4">
                 <arg arg_type="2" arg_index="1" />
             </args>
             <statement_name pool_type="6">NTLUpdateElementMaxBrakeMinSpeed</statement_name>
-            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BrakeMinSpeed";</sql_query>
+            <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE Param="BrakeMinSpeed" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">
@@ -1128,7 +1129,7 @@
             </args>
             <statement_name pool_type="6">NTLSetBrakeDeceleration</statement_name>
             <sql_query pool_type="6">UPDATE ElementParams SET Min=?1,Max=?2 WHERE
-                Param="BrakeDeceleration";</sql_query>
+                Param="BrakeDeceleration" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">
@@ -1145,7 +1146,7 @@
             </args>
             <statement_name pool_type="6">NTLUpdateElementsMinBrakeDeceleration</statement_name>
             <sql_query pool_type="6">UPDATE ElementParams SET Min=?1 WHERE
-                Param="BrakeDeceleration";</sql_query>
+                Param="BrakeDeceleration" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">
@@ -1162,7 +1163,7 @@
             </args>
             <statement_name pool_type="6">NTLUpdateElementsMaxBrakeDeceleration</statement_name>
             <sql_query pool_type="6">UPDATE ElementParams SET Max=?1 WHERE
-                Param="BrakeDeceleration";</sql_query>
+                Param="BrakeDeceleration" AND Element!="TK_515_DualDirectionBooster";</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">

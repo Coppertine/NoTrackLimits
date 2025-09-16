@@ -1,3 +1,7 @@
 [*.lua]
 indent_style = space
 indent_size = 4
+
+[*.pscollection]
+indent_style = space
+indent_size = 4
