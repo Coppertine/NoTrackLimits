@@ -294,7 +294,7 @@ do -- Scale Range --
     ---comment
     ---@param _fMin any
     ---@param _fMax any
-    GameDatabase.NTLUpdateScaleRange = function(_fMin, _fMax)end
+    GameDatabase.NTLUpdateScaleRange = function(_fMin, _fMax) end
     ---comment
     ---@param _fMin any
     GameDatabase.NTLUpdateElementsMinScaleRange = function(_fMin) end
@@ -318,13 +318,13 @@ do         -- Booster --
             ---@param _fMin number Minimum acceleration in meters per second.
             ---@param _fMax number Maximum acceleration in meters per second.
             GameDatabase.NTLSetBoosterAcceleration = function(_fMin, _fMax) end
-            
-            --- Sets all track element's minimum booster acceleration speed. 
-            ---@param _fMin number Minimum acceleration in meters per second.    
-            GameDatabase.NTLUpdateElementsMinBoosterAcceleration= function(_fMin) end
+
+            --- Sets all track element's minimum booster acceleration speed.
+            ---@param _fMin number Minimum acceleration in meters per second.
+            GameDatabase.NTLUpdateElementsMinBoosterAcceleration = function(_fMin) end
             --- Sets all track element's maximum booster acceleration speed.
             ---@param _fMax any
-            GameDatabase.NTLUpdateElementsMaxBoosterAcceleration= function(_fMax) end
+            GameDatabase.NTLUpdateElementsMaxBoosterAcceleration = function(_fMax) end
 
             ---comment
             ---@param _sElement any
@@ -344,19 +344,18 @@ do         -- Booster --
 
             ---
             ---@param _fMin any
-           GameDatabase.NTLUpdateElementsMinAltBoosterAcceleration = function (_fMin) end
-           ---comment
-           ---@param _fMax any
-           GameDatabase.NTLUpdateElementsMaxAltBoosterAcceleration = function(_fMax)end
+            GameDatabase.NTLUpdateElementsMinAltBoosterAcceleration = function(_fMin) end
+            ---comment
+            ---@param _fMax any
+            GameDatabase.NTLUpdateElementsMaxAltBoosterAcceleration = function(_fMax) end
             ---comment
             ---@param _sElement any
             ---@param _fMin any
-           GameDatabase.NTLUpdateElementMinAltBoosterAcceleration = function(_sElement, _fMin)end
-           ---comment
-           ---@param _sElement any
-           ---@param _fMax any
-           GameDatabase.NTLUpdateElementMaxAltBoosterAcceleration = function (_sElement, _fMax)end            
-           end            
+            GameDatabase.NTLUpdateElementMinAltBoosterAcceleration = function(_sElement, _fMin) end
+            ---comment
+            ---@param _sElement any
+            ---@param _fMax any
+            GameDatabase.NTLUpdateElementMaxAltBoosterAcceleration = function(_sElement, _fMax) end
         end
     end
     do     -- Max Speed --
