@@ -937,11 +937,11 @@ NoTrackLimitsManager.tDatabaseFunctions = {
             "NTLUpdateRideMaxHydraulicReturnSpeed", _sRide, _fMax)
     end,
     -- Holding Stop Location
-    NTLSetHoldingStopLocation = function(_fMin, _fMax)
-        dbgTrace("NoTrackLimitsManager.NTLSetHoldingStopLocation")
-        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
-            "NTLSetElementsHoldingStopLocation", _fMin, _fMax)
-    end,
+    --NTLSetHoldingStopLocation = function(_fMin, _fMax)
+    --    dbgTrace("NoTrackLimitsManager.NTLSetHoldingStopLocation")
+    --    NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+    --        "NTLSetElementsHoldingStopLocation", _fMin, _fMax)
+    --end,
     NTLUpdateElementsMinHoldingStopLocation = function(_fMin)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementsMinHoldingStopLocation")
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
