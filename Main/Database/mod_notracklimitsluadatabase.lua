@@ -4,10 +4,9 @@ local pairs = global.pairs
 local require = global.require
 local table = require("Common.tableplus")
 local tryrequire = global.tryrequire
---local export = require("Export")
 local GameDatabase = require("Database.GameDatabase")
 
-local Mod_NoTrackLimitsLuaDatabase = module(...)
+local Mod_NoTrackLimitsLuaDatabase = {}
 
 local FORGE_UTILS_VERSION = 1.0
 local MOD_NAME = "NoTrackLimits"
@@ -32,7 +31,6 @@ Mod_NoTrackLimitsLuaDatabase.Init = function()
 end
 
 Mod_NoTrackLimitsLuaDatabase.Setup = function()
-    --   export.Export()
 end
 
 Mod_NoTrackLimitsLuaDatabase.Activate = function()
@@ -51,3 +49,5 @@ Mod_NoTrackLimitsLuaDatabase.AddLuaManagers = function(_fnAdd)
         _fnAdd(sManagerName, tParams)
     end
 end
+
+return Mod_NoTrackLimitsLuaDatabase
