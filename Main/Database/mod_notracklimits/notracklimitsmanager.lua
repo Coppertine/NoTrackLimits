@@ -1183,7 +1183,7 @@ NoTrackLimitsManager.tDatabaseFunctions = {
         local _trainList = {}
         local _sortList = {}
         for _, _j in pairs(_trainDBList) do
-            -- dbgTrace(tableplus.tostring(_train, nil, nil, nil, true))
+            --     dbgTrace(tableplus.tostring(_train, nil, nil, nil, true))
             table.insert(_trainList, _j[1])
             table.insert(_sortList, _j[2])
         end
@@ -1196,7 +1196,7 @@ NoTrackLimitsManager.tDatabaseFunctions = {
                 _iSort = math.max(table.unpack(_sortList)) + 10
                 dbgTrace("Set sort number to " .. _iSort)
             end
-            -- dbgTrace("Appending train: " .. _train .. " to ride: " .. _sRide .. " using sort id ".._iSort)
+            dbgTrace("Appending train: " .. _train .. " to ride: " .. _sRide .. " using sort id " .. _iSort)
             NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
                 "NTLUpdateTrainToRideExtra", _sRide, _train, _iSort)
             table.insert(_trainList, _train)
