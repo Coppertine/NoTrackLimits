@@ -60,7 +60,7 @@
             <statement_name>NTLSetElementParamaterValues</statement_name>
             <sql_query>UPDATE ElementParams SET
                 Min=COALESCE(?3,Min),Max=COALESCE(?4,Max),Step=COALESCE(?5,Step) WHERE Param=?1 AND
-                Element=?2</sql_query>
+                Element=?2;</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">
@@ -265,20 +265,27 @@
             <sql_query pool_type="6">UPDATE RideParams SET Max=?2 WHERE Param="BankingRangeDegrees"
                 AND Ride=?1;</sql_query>
         </preparedstatement>
-        <preparedstatement>
+        <preparedstatement arg_count="1">
             <args>
                 <arg arg_type="2" arg_index="1" />
             </args>
             <statement_name>NTLUpdateRidesMaxSlopeDeltaDegrees</statement_name>
             <sql_query>UPDATE RideData SET MaxSlopeDeltaDegrees=?1;</sql_query>
         </preparedstatement>
-        <preparedstatement>
+        <preparedstatement arg_count="2">
             <args>
                 <arg arg_type="3" arg_index="1" />
-                <arg arg_type="2" arg_index="2" />
+                <arg arg_type="0" arg_index="2" />
             </args>
             <statement_name>NTLUpdateRideMaxBankDeltaDegrees</statement_name>
             <sql_query>UPDATE RideData SET MaxBankDeltaDegrees=?2 WHERE Ride=?1;</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args>
+                <arg arg_type="0" arg_index="1" />
+            </args>
+            <statement_name>NTLUpdateRidesMaxBankDeltaDegrees</statement_name>
+            <sql_query>UPDATE RideData SET MaxBankDeltaDegrees=?1;</sql_query>
         </preparedstatement>
         <preparedstatement arg_count="2">
             <args pool_type="4">

@@ -543,7 +543,15 @@ NoTrackLimitsManager.tDatabaseFunctions = {
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
             "NTLUpdateRidesMaxBankingRangeDegrees", _fMax)
     end,
+    NTLUpdateRidesMaxBankDeltaDegrees = function(_fMax)
+        dbgTrace("NoTrackLimitsManager.NTLUpdateRidesMaxBankingRangeDegrees")
+        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLUpdateRidesMaxBankDeltaDegrees", _fMax)
+    end,
+
+
     -- Bank Pivot Range
+
     NTLUpdateBankPivotRange = function(_fMin, _fMax, _fStep)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementsBankPivotRange")
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
@@ -1565,10 +1573,10 @@ NoTrackLimitsManager._ProcessConfig = function()
             end
         end
 
-        -- if NoTrackLimitsManager.Global.tConfig.tBankingRange.maxDelta ~= nil then
-        --     dbgTrace("Setting Max Banking Delta")
-        --     GameDatabase.NTLUpdateRidesMaxBankDeltaDegrees(NoTrackLimitsManager.Global.tConfig.tBankingRange.maxDelta)
-        -- end
+        if NoTrackLimitsManager.Global.tConfig.tBankingRange.maxDelta ~= nil then
+            dbgTrace("Setting Max Banking Delta")
+            GameDatabase.NTLUpdateRidesMaxBankDeltaDegrees(NoTrackLimitsManager.Global.tConfig.tBankingRange.maxDelta)
+        end
 
         if NoTrackLimitsManager.Global.tConfig.tBankingRange.min ~= nil and
             NoTrackLimitsManager.Global.tConfig.tBankingRange.max ~= nil then
