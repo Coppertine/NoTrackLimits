@@ -1365,6 +1365,8 @@ NoTrackLimitsManager.EditBumperCameraPrefab = function(sPrefabName)
 
     -- Now to set the prefab rotation
     tVisualsPrefab.Children.TrackCarFrontBumper.Properties.Rotation.Default = Vector3:new(0, 0, 0)
+    -- Apparently CamOffsets pointed out the problem also lies with FrontLook
+    tVisualsPrefab.Children.TrackCarFrontLook.Properties.Rotation.Default = Vector3:new(0, 0, 0)
     return tVisualsPrefab
 end
 
