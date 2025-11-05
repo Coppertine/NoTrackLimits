@@ -1840,25 +1840,26 @@ NoTrackLimitsManager._ProcessConfig = function()
     end
 
     -- Holding Release
-    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation then
-        dbgTrace("Setting Holding Section Stop Location")
-
-        if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil and
-            NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
-            dbgTrace("Using min, max")
-            GameDatabase.NTLSetHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min,
-                NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max)
-        else
-            if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil then
-                GameDatabase.NTLUpdateElementsMinHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
-                    .tStopLocation.min)
-            end
-            if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
-                GameDatabase.NTLUpdateElementsMaxHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
-                    .tStopLocation.max)
-            end
-        end
-    end
+    -- Disabled due to broken animated tracks. thx DotNet
+    --if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation then
+    --    dbgTrace("Setting Holding Section Stop Location")
+    --
+    --    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil and
+    --        NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
+    --        dbgTrace("Using min, max")
+    --        GameDatabase.NTLSetHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min,
+    --            NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max)
+    --    else
+    --        if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil then
+    --            GameDatabase.NTLUpdateElementsMinHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
+    --                .tStopLocation.min)
+    --        end
+    --        if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
+    --            GameDatabase.NTLUpdateElementsMaxHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
+    --                .tStopLocation.max)
+    --        end
+    --    end
+    --end
 
     -- Holding Stop
     if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseSpeed then
