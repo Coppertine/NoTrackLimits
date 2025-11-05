@@ -1,4 +1,4 @@
-<PscollectionRoot count="164" game="Planet Coaster 2">
+<PscollectionRoot count="166" game="Planet Coaster 2">
     <prepared_statements pool_type="4">
         <preparedstatement>
             <statement_name pool_type="6">NTLGetAllTrackedRides</statement_name>
@@ -1381,6 +1381,13 @@
             <sql_query>INSERT OR IGNORE INTO
                 ElementParams(Element,Param,Min,Max,Initial,Step,LabelOverride,ValueLabelSetName)
                 VALUES(?1,?2,?3,?4,?5,?6,?7,?8);</sql_query>
+        </preparedstatement>
+        <preparedstatement arg_count="1">
+            <args>
+                <arg arg_type="3" arg_index="1"/>
+            </args>
+            <statement_name>NTLGetAllContentPacksOfElement</statement_name>
+            <sql_query>SELECT DISTINCT RideData.ContentPack FROM RideData INNER JOIN ElementLists ON ElementLists.Ride = RideData.Ride WHERE ElementLists.Element=?1;</sql_query>
         </preparedstatement>
     </prepared_statements>
 </PscollectionRoot>

@@ -1256,6 +1256,12 @@ NoTrackLimitsManager.tDatabaseFunctions = {
             "NTLAppendElementParamaterToElement", _sElement, _sParam, _dMin, _dMax, _dInitial, _dStep, _labelOverride,
             _valueLabelSetName)
     end,
+
+    NTLGetAllContentPacksOfElement = function(_sElement)
+        dbgTrace("NoTrackLimitsManager.NTLGetAllContentPacksOfElement")
+        return NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLGetAllContentPacksOfElement", _sElement)
+    end,
     NTLGetGlobalConfig = function()
         return NoTrackLimitsManager.Global
     end
@@ -1371,6 +1377,19 @@ NoTrackLimitsManager.EditBumperCameraPrefab = function(sPrefabName)
 end
 
 
+function NoTrackLimitsManager.CanUseElement(_sElement)
+    local contentPacks = GameDatabase.NTLGetAllContentPacksOfElement(_sElement)
+    for _, _sPack in ipairs(contentPacks) do
+        if _sPack == "BaseGame" then
+            return true
+        end
+        if api.content.IsDLCOwned(_sPack) == false then
+            return false
+        end
+    end
+    return true
+end
+
 NoTrackLimitsManager._ProcessConfig = function()
     --- Mostly for those who JUST want more trains or change the camera effects.
     if NoTrackLimitsManager.Global.tConfig == {} or NoTrackLimitsManager.Global.tConfig == nil then
@@ -1382,8 +1401,14 @@ NoTrackLimitsManager._ProcessConfig = function()
     -- Elements to other rides
     if NoTrackLimitsManager.Global.tConfig.tAppendedElements then
         for _, element in ipairs(NoTrackLimitsManager.Global.tConfig.tAppendedElements) do
-            dbgTrace("Appending element: " .. element)
-            GameDatabase.NTLUpdateElementToRides(element)
+            local canAddElement = NoTrackLimitsManager.CanUseElement(element)
+            if not canAddElement then
+                dbgTraceErr("User does not have the DLC required for " .. element)
+            end
+            if canAddElement then
+                dbgTrace("Appending element: " .. element)
+                GameDatabase.NTLUpdateElementToRides(element)
+            end
         end
     end
 
@@ -1392,7 +1417,11 @@ NoTrackLimitsManager._ProcessConfig = function()
         for _sRide, _tRideElements in pairs(NoTrackLimitsManager.Global.tConfig.tAppendedElementsToRide) do
             for _, element in ipairs(_tRideElements) do
                 dbgTrace("Appending element: " .. element .. "to ride: " .. _sRide)
-                GameDatabase.NTLUpdateElementToRide(_sRide, element)
+
+                local canAddElement = NoTrackLimitsManager.CanUseElement(element)
+                if canAddElement then
+                    GameDatabase.NTLUpdateElementToRide(_sRide, element)
+                end
             end
         end
     end
