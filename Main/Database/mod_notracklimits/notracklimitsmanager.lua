@@ -22,9 +22,9 @@ local _tTrace = function(_line)
 end
 
 local dbgTrace = function(_line)
-    if NoTrackLimitsManager.Global.bPrintDebugLog then
-        _tTrace(_line)
-    end
+    --    if NoTrackLimitsManager.Global.bPrintDebugLog == true then
+    _tTrace(_line)
+    --  end
 end
 
 local dbgTraceErr = function(_line)
