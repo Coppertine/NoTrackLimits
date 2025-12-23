@@ -1339,11 +1339,17 @@ NoTrackLimitsManager.PreBuildPrefabs = function(_fnAdd, _tLuaPrefabNames, _tLuaP
     -- this is for the strange case of Frontier accidentally doing -pi to some train cameras. need to iterate through all train prefabs tho.
     if NoTrackLimitsManager.Global.bEnableCameraEffects ~= true and NoTrackLimitsManager.Global.bPatchTrainCameras == true then
         dbgTrace("Patching all cameras on trains")
-        for _, sPrefabName in ipairs(invertedCameraTrainPrefabs) do
-            local tVisualsPrefab = NoTrackLimitsManager.EditBumperCameraPrefab(sPrefabName);
-            if tVisualsPrefab ~= nil then
-                _fnAdd(sPrefabName, tVisualsPrefab)
+        -- CamOffset does the same thing, so i don't want to ruin their progress..
+        if camoffset_mod == nil then
+            for _, sPrefabName in ipairs(invertedCameraTrainPrefabs) do
+                local tVisualsPrefab = NoTrackLimitsManager.EditBumperCameraPrefab(sPrefabName);
+                if tVisualsPrefab ~= nil then
+                    _fnAdd(sPrefabName, tVisualsPrefab)
+                end
             end
+        else
+            dbgTrace("CamOffsets found, skipping prefab patching and letting the mod handle it instead.")
+            NoTrackLimitsManager.Global.bPatchTrainCameras = false
         end
     end
 end
