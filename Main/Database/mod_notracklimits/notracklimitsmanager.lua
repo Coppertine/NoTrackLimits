@@ -1436,6 +1436,9 @@ NoTrackLimitsManager._ProcessConfig = function()
                 if canAddElement then
                     GameDatabase.NTLUpdateElementToRide(_sRide, element)
                 end
+                if not canAddElement then
+                    dbgTraceErr("User does not have the DLC required for " .. element)
+                end
             end
         end
     end
