@@ -8,6 +8,7 @@ local ipairs = global.ipairs
 local math = global.math
 local tryrequire = global.tryrequire
 local Vector3 = require("Vector3")
+local camoffset_mod = tryrequire("database.mod_camoffsetsluadatabase")
 ---@class (partial) GameDatabase
 local GameDatabase = require("Database.GameDatabase")
 local database = api.database
@@ -937,11 +938,11 @@ NoTrackLimitsManager.tDatabaseFunctions = {
             "NTLUpdateRideMaxHydraulicReturnSpeed", _sRide, _fMax)
     end,
     -- Holding Stop Location
-    --NTLSetHoldingStopLocation = function(_fMin, _fMax)
-    --    dbgTrace("NoTrackLimitsManager.NTLSetHoldingStopLocation")
-    --    NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
-    --        "NTLSetElementsHoldingStopLocation", _fMin, _fMax)
-    --end,
+    NTLSetHoldingStopLocation = function(_fMin, _fMax)
+        dbgTrace("NoTrackLimitsManager.NTLSetHoldingStopLocation")
+        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLSetElementsHoldingStopLocation", _fMin, _fMax)
+    end,
     NTLUpdateElementsMinHoldingStopLocation = function(_fMin)
         dbgTrace("NoTrackLimitsManager.NTLUpdateElementsMinHoldingStopLocation")
         NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
@@ -1885,29 +1886,31 @@ NoTrackLimitsManager._ProcessConfig = function()
         end
     end
 
-    -- Holding Release
-    -- Disabled due to broken animated tracks. thx DotNet
-    --if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation then
-    --    dbgTrace("Setting Holding Section Stop Location")
-    --
-    --    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil and
-    --        NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
-    --        dbgTrace("Using min, max")
-    --        GameDatabase.NTLSetHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min,
-    --            NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max)
-    --    else
-    --        if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil then
-    --            GameDatabase.NTLUpdateElementsMinHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
-    --                .tStopLocation.min)
-    --        end
-    --        if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
-    --            GameDatabase.NTLUpdateElementsMaxHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
-    --                .tStopLocation.max)
-    --        end
-    --    end
-    --end
+    -- Stop Location
+    -- Semi Disabled due to broken animated tracks. thx DotNet
+    -- Users will have to re enter it into the config file.
+    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation then
+        dbgTrace("Setting Holding Section Stop Location")
 
-    -- Holding Stop
+        if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil and
+            NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
+            dbgTrace("Using min, max")
+            GameDatabase.NTLSetHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min,
+                NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max)
+        else
+            if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.min ~= nil then
+                GameDatabase.NTLUpdateElementsMinHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
+                    .tStopLocation.min)
+            end
+            if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tStopLocation.max ~= nil then
+                GameDatabase.NTLUpdateElementsMaxHoldingStopLocation(NoTrackLimitsManager.Global.tConfig.tHoldingSection
+                    .tStopLocation.max)
+            end
+        end
+    end
+
+    --- Holding Section
+    -- Release Speed
     if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseSpeed then
         dbgTrace("Setting Holding Section Release")
 
@@ -1928,26 +1931,37 @@ NoTrackLimitsManager._ProcessConfig = function()
         end
     end
 
-    -- -- Holding Release Acceleration
-    -- if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration then
-    --     dbgTrace("Setting Holding Section Acceleration")
-    --     if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.min ~= nil and
-    --         NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.max ~= nil then
-    --         dbgTrace("Using min, max")
-    --         GameDatabase.NTLSetHoldingReleaseAcceleration(
-    --             NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.min,
-    --             NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.max)
-    --     else
-    --         if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.min ~= nil then
-    --             GameDatabase.NTLUpdateElementsMinHoldingReleaseAcceleration(NoTrackLimitsManager.Global.tConfig
-    --                 .tHoldingSection.tReleaseAcceleration.min)
-    --         end
-    --         if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.max ~= nil then
-    --             GameDatabase.NTLUpdateElementsMaxHoldingReleaseAcceleration(NoTrackLimitsManager.Global.tConfig
-    --                 .tHoldingSection.tReleaseAcceleration.max)
-    --         end
-    --     end
-    -- end
+    -- Min Time
+    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMinTime then
+        dbgTrace("Setting Holding Section min time")
+        local _fMin = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMinTime.min
+        local _fMax = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMinTime.max
+        local _fStep = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMinTime.step
+        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLSetElementsParameterValues", "HoldingSectionMinTime", _fMin, _fMax, _fStep)
+    end
+
+    -- Max Time
+    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMaxTime then
+        dbgTrace("Setting Holding Section max time")
+        local _fMin = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMaxTime.min
+        local _fMax = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMaxTime.max
+        local _fStep = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tMaxTime.step
+        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLSetElementsParameterValues", "HoldingSectionMaxTime", _fMin, _fMax, _fStep)
+    end
+
+    -- Release Acceleartion
+    if NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration then
+        dbgTrace("Setting Holding Section max time")
+        local _fMin = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.min
+        local _fMax = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.max
+        local _fStep = NoTrackLimitsManager.Global.tConfig.tHoldingSection.tReleaseAcceleration.step
+        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLSetElementsParameterValues", "HoldingSectionReleaseAcceleration", _fMin, _fMax, _fStep)
+    end
+
+    --
 
     -- -- Animated Track
 
