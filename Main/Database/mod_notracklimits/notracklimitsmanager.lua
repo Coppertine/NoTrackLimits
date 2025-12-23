@@ -1886,6 +1886,15 @@ NoTrackLimitsManager._ProcessConfig = function()
         end
     end
 
+    -- Launch Delay
+    if NoTrackLimitsManager.Global.tConfig.tHydraulicLaunch.tLaunchDelay then
+        dbgTrace("Setting Hydraulic Launch Delay")
+        local _fMin = NoTrackLimitsManager.Global.tConfig.tHydraulicLaunch.tLaunchDelay.min
+        local _fMax = NoTrackLimitsManager.Global.tConfig.tHydraulicLaunch.tLaunchDelay.max
+        local _fStep = NoTrackLimitsManager.Global.tConfig.tHydraulicLaunch.tLaunchDelay.step
+        NoTrackLimitsManager._ExecuteQuery("TrackedRides", "Mod_NoTrackLimits_TrackedRides",
+            "NTLSetElementsParameterValues", "HoldingSectionMinTime", _fMin, _fMax, _fStep)
+    end
     -- Stop Location
     -- Semi Disabled due to broken animated tracks. thx DotNet
     -- Users will have to re enter it into the config file.
