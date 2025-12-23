@@ -1951,17 +1951,7 @@ NoTrackLimitsManager._ProcessConfig = function()
 
     -- -- Animated Track
 
-    -- -- Animated Track Post Depature Delay
-    -- if NoTrackLimitsManager.Global.tConfig.tAnimatedTrack.tPostDepatureDelay then
-    --     dbgTrace("Setting Animated Track Post Depature Delay")
-    --     if NoTrackLimitsManager.Global.tConfig.tAnimatedTrack.tPostDepatureDelay.min ~= nil and
-    --         NoTrackLimitsManager.Global.tConfig.tAnimatedTrack.tPostDepatureDelay.max ~= nil then
-    --         dbgTrace("Using min, max")
-    --         GameDatabase.NTLSetAnimatedTrackPostDepartureDelay(
-    --             NoTrackLimitsManager.Global.tConfig.tAnimatedTrack.tPostDepatureDelay.min,
-    --             NoTrackLimitsManager.Global.tConfig.tAnimatedTrack.tPostDepatureDelay.max)
-    --     end
-    -- end
+
 
     -- Brake Min Speed
     if NoTrackLimitsManager.Global.tConfig.tBrakes.tMinSpeed then
